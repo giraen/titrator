@@ -67,8 +67,8 @@ const char* calMenu[CAL_MENU_ITEMS] = {
 // ==========================================
 // INITIAL VALUES
 // ==========================================
-String lastDisplayedLine1 = "";
-String lastDisplayedLine2 = "";
+char lastDisplayedLine1[17] = "";
+char lastDisplayedLine2[17] = "";
 
 // ==========================================
 // TRACKERS AND FLAGS
@@ -141,9 +141,11 @@ void setup() {
 void loop() {
   int btn = getButton();
 
+  char menuBuffer[17];
   switch (currentState) {
     case MAIN_MENU:
-      displayMessage("--- MAIN MENU ---", String("> ") + mainMenu[menuIndex]);
+      snprintf(menuBuffer, sizeof(menuBuffer), "> %s", mainMenu[menuIndex]);
+      displayMessage("--- MAIN MENU ---", menuBuffer);
 
       // Scroll Mechanism
       if (btn == 1) {
@@ -164,7 +166,8 @@ void loop() {
       break;
 
     case CAL_MENU:
-      displayMessage("- CALIBRATION -", String("> ") + calMenu[menuIndex]);
+      snprintf(menuBuffer, sizeof(menuBuffer), "> %s", calMenu[menuIndex]);
+      displayMessage("- CALIBRATION -", menuBuffer);
 
       if (btn == 1) {
         menuIndex--;

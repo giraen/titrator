@@ -106,24 +106,25 @@ void readPh() {
   }
 }
 
-void displayMessage(String line1, String line2) {
-  if (line1 == lastDisplayedLine1 && line2 == lastDisplayedLine2) {
+void displayMessage(const char* line1, const char* line2) {
+  if (strncmp(line1, lastDisplayedLine1, 16) == 0 && strncmp(line2, lastDisplayedLine2, 16) == 0) {
     return;
   }
 
-  lastDisplayedLine1 = line1;
-  lastDisplayedLine2 = line2;
+  strncpy(lastDisplayedLine1, line1, 16);
+  lastDisplayedLine1[16] = '\0';
+  strncpy(lastDisplayedLine2, line2, 16);
+  lastDisplayedLine2[16] = '\0';
 
-  // CLEAR LCD
-  while (line1.length() < 16) line1 += " ";
-  while (line2.length() < 16) line2 += " ";
-
-  // Print screen content
+  // Line 1 print
   lcd.setCursor(0, 0);
-  lcd.print(line1.substring(0, 16)); 
-  
+  lcd.print(lastDisplayedLine1);
+  for (byte i = strlen(lastDisplayedLine1); i < 16; i++) lcd.print(' ');
+
+  // Line 2 print
   lcd.setCursor(0, 1);
-  lcd.print(line2.substring(0, 16));
+  lcd.print(lastDisplayedLine2);
+  for (byte i = strlen(lastDisplayedLine2); i < 16; i++) lcd.print(' ');
 }
 
 SelResult selPressOrHold() {
@@ -144,7 +145,7 @@ SelResult selPressOrHold() {
   return (millis() - pressTime) < 1000 ? SEL_SHORT : SEL_HOLD;
 }
 
-bool waitForConfirmation(String line1, String line2) {
+bool waitForConfirmation(const char* line1, const char* line2) {
   displayMessage(line1, line2);
 
   if (selPressOrHold() == SEL_HOLD) {

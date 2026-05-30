@@ -66,7 +66,12 @@ void runTitration() {
   while(!phSpike) {
     readPh();
     float current_pH = 7.0 - ((smoothed_voltage - VOLTAGE_PH7) / PH_STEP);
-    displayMessage("Titrating...", "pH: " + String(current_pH, 2));
+
+    char phStr[8];
+    dtostrf(current_pH, 4, 2, phStr);
+    char line2[17];
+    snprintf(line2, sizeof(line2), "pH: %s", phStr);
+    displayMessage("Titrating...", line2);
   }
   
   analogWrite(PUMP_SWITCH_PIN, 0);
@@ -77,7 +82,12 @@ void runTitration() {
   unsigned long runTimeMs = endTime - startTime;
 
   float mlTransferred = (FLOW_RATE_ML_PER_MIN / 60000.0) * runTimeMs;
-  displayMessage("Equivalence Met", String(mlTransferred, 2) + " mL Added");
+
+  char mlStr[8];
+  dtostrf(mlTransferred, 4, 2, mlStr);
+  char line2[17];
+  snprintf(line2, sizeof(line2), "%s mL Added", mlStr);
+  displayMessage("Equivalence Met", line2);
 
   delay(6000);
 }
@@ -92,7 +102,13 @@ void runCalProbe() {
   while (true) {
     float raw_voltage = analogRead(PH_SENSOR_PIN) * (5.0 / 1023.0);
     smoothed_voltage = (ALPHA * raw_voltage) + ((1.0 - ALPHA) * smoothed_voltage);
-    displayMessage("Reading pH 7...", "Volts: " + String(smoothed_voltage, 2));
+
+
+    char voltStr[8];
+    dtostrf(smoothed_voltage, 4, 2, voltStr);
+    char line2[17];
+    snprintf(line2, sizeof(line2), "Volts: %s", voltStr);
+    displayMessage("Reading pH 7...", line2);
     delay(100);
 
     if (digitalRead(SEL_PIN) == LOW) {
@@ -100,7 +116,12 @@ void runCalProbe() {
     }
   }
   VOLTAGE_PH7 = smoothed_voltage; 
-  displayMessage("Saved pH 7", String(VOLTAGE_PH7, 2) + " V");
+
+  char savedVoltStr[8];
+  dtostrf(VOLTAGE_PH7, 4, 2, savedVoltStr);
+  char savedLine2[17];
+  snprintf(savedLine2, sizeof(savedLine2), "%s V", savedVoltStr);
+  displayMessage("Saved pH 7", savedLine2);
   delay(1000);
 
   // --- pH 4 Calibration ---
@@ -110,7 +131,12 @@ void runCalProbe() {
   while (true) {
     float raw_voltage = analogRead(PH_SENSOR_PIN) * (5.0 / 1023.0);
     smoothed_voltage = (ALPHA * raw_voltage) + ((1.0 - ALPHA) * smoothed_voltage);
-    displayMessage("Reading pH 4...", "Volts: " + String(smoothed_voltage, 2));
+
+    char voltStr[8];
+    dtostrf(smoothed_voltage, 4, 2, voltStr);
+    char line2[17];
+    snprintf(line2, sizeof(line2), "Volts: %s", voltStr);
+    displayMessage("Reading pH 4...", line2);
     delay(100);
 
     if (digitalRead(SEL_PIN) == LOW) {
@@ -121,7 +147,11 @@ void runCalProbe() {
   VOLTAGE_PH4 = smoothed_voltage; 
   PH_STEP = (VOLTAGE_PH4 - VOLTAGE_PH7) / (7.0 - 4.0);
 
-  displayMessage("Saved pH 4", String(VOLTAGE_PH4, 2) + " V");
+  char savedVoltStr4[8];
+  dtostrf(VOLTAGE_PH4, 4, 2, savedVoltStr4);
+  char savedLine2_4[17];
+  snprintf(savedLine2_4, sizeof(savedLine2_4), "%s V", savedVoltStr4);
+  displayMessage("Saved pH 4", savedLine2_4);
 
   // Save to permanent memory!
   saveSettings(); 
@@ -150,7 +180,11 @@ void runCalPump() {
   bool editing = true;
 
   while(editing) {
-    displayMessage("Output mL:", String(displayVolume, 1) + " mL");
+    char volStr[8];
+    dtostrf(displayVolume, 4, 1, volStr);
+    char line2[17];
+    snprintf(line2, sizeof(line2), "%s mL", volStr);
+    displayMessage("Output mL:", line2);
 
     bool up = digitalRead(UP_PIN);
     bool dn = digitalRead(DN_PIN);
@@ -174,7 +208,11 @@ void runCalPump() {
     else { holdTimer = 0; }
   }
 
-  displayMessage("Saved Flow Rate:", String(FLOW_RATE_ML_PER_MIN, 1) + " mL/m");
+  char finalVolStr[8];
+  dtostrf(FLOW_RATE_ML_PER_MIN, 4, 1, finalVolStr);
+  char savedLine2[17];
+  snprintf(savedLine2, sizeof(savedLine2), "%s mL/m", finalVolStr);
+  displayMessage("Saved Flow Rate:", savedLine2);
   delay(1500);
 
   // Save to permanent memory!
@@ -208,6 +246,14 @@ void runFlush() {
 }
 
 void viewSettings() {
-  displayMessage("Flow: " + String(FLOW_RATE_ML_PER_MIN, 1), "Step: " + String(PH_STEP, 3));
+  char flowStr[8], stepStr[8];
+  dtostrf(FLOW_RATE_ML_PER_MIN, 4, 1, flowStr);
+  dtostrf(PH_STEP, 5, 3, stepStr);
+
+  char line1[17], line2[17];
+  snprintf(line1, sizeof(line1), "Flow: %s", flowStr);
+  snprintf(line2, sizeof(line2), "Step: %s", stepStr);
+  
+  displayMessage(line1, line2);
   delay(4000);
 }
