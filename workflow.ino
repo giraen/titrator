@@ -78,10 +78,6 @@ void runTitration() {
 
   float mlTransferred = (FLOW_RATE_ML_PER_MIN / 60000.0) * runTimeMs;
   displayMessage("Equivalence Met", String(mlTransferred, 2) + " mL Added");
-  
-  Serial.print("Total Titrant Added: ");
-  Serial.print(mlTransferred, 5);
-  Serial.println(" mL");
 
   delay(6000);
 }
@@ -111,7 +107,7 @@ void runCalProbe() {
   displayMessage("Place in pH 4.0", "Press SEL to set");
   delay(1000);
 
-  while(digitalRead(SEL_PIN) == HIGH) {
+  while (true) {
     float raw_voltage = analogRead(PH_SENSOR_PIN) * (5.0 / 1023.0);
     smoothed_voltage = (ALPHA * raw_voltage) + ((1.0 - ALPHA) * smoothed_voltage);
     displayMessage("Reading pH 4...", "Volts: " + String(smoothed_voltage, 2));

@@ -49,7 +49,7 @@ SystemState currentState = MAIN_MENU;
 int menuIndex = 0;
 
 const int MAIN_MENU_ITEMS = 4;
-String mainMenu[MAIN_MENU_ITEMS] = {
+const char* mainMenu[MAIN_MENU_ITEMS] = {
   "1. Titrate",
   "2. Calibrate",
   "3. View settings",
@@ -57,7 +57,7 @@ String mainMenu[MAIN_MENU_ITEMS] = {
 };
 
 const int CAL_MENU_ITEMS = 4;
-String calMenu[CAL_MENU_ITEMS] = {
+const char* calMenu[CAL_MENU_ITEMS] = {
   "1. Full cal",
   "2. Probe cal",
   "3. Pump cal",
@@ -92,8 +92,6 @@ const unsigned long SAMPLE_INTERVAL = 500;
 const unsigned long CALIBRATION_TIME_MS = 60000;
 
 void setup() {
-  Serial.begin(9600);
-
   // Check Memory for Constant values
   byte magicByte;
   EEPROM.get(12, magicByte);
@@ -145,7 +143,7 @@ void loop() {
 
   switch (currentState) {
     case MAIN_MENU:
-      displayMessage("--- MAIN MENU ---", "> " + mainMenu[menuIndex]);
+      displayMessage("--- MAIN MENU ---", String("> ") + mainMenu[menuIndex]);
 
       // Scroll Mechanism
       if (btn == 1) {
@@ -166,7 +164,7 @@ void loop() {
       break;
 
     case CAL_MENU:
-      displayMessage("- CALIBRATION -", "> " + calMenu[menuIndex]);
+      displayMessage("- CALIBRATION -", String("> ") + calMenu[menuIndex]);
 
       if (btn == 1) {
         menuIndex--;
